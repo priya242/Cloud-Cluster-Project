@@ -25,7 +25,6 @@ public class q5 {
 
 		MongoClient mongo = new MongoClient("localhost", 27017);
 		MongoDatabase database = mongo.getDatabase("mongodb");
-		Instant startinstance = Instant.now();
 		MongoCollection<Document> collection = database.getCollection("highways");
 		FindIterable<Document> highways = collection.find();
 		ArrayList<String> detectorids = new ArrayList<String>();
@@ -90,10 +89,6 @@ public class q5 {
 		System.out.println("Average speed: " + avg);
 		System.out.println("Length of all staion in I-205 NB Freeway: " + stationLength);
 		System.out.println("The average travel time for 7-9AM and 4-6PM on September 22, 2011 for the I-205 NB freeway in minutes: " + (stationLength / avg) * 60);
-		Instant finishinstance = Instant.now();
-		long timeElapsed = Duration.between(startinstance, finishinstance).toMillis(); 
-		System.out.println("time taken:"+timeElapsed);
-
 		mongo.close();
 	}
 }
