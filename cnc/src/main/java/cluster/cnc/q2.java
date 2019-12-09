@@ -22,7 +22,6 @@ public class q2 {
 	public static void main(String[] args) {
 		MongoClient mongo = new MongoClient("localhost", 27017);
 		MongoDatabase database = mongo.getDatabase("mongodb");
-		Instant startinstance = Instant.now();
 		MongoCollection<Document> collection = database.getCollection("highways");
 		FindIterable<Document> highways = collection.find();
 		ArrayList<String> detectorids = new ArrayList<String>();
@@ -64,11 +63,7 @@ public class q2 {
 			}
 		}
 		System.out.println("No of matching records:"+count);
-		System.out.println("Sum of volumes: "+sum);
-		Instant finishinstance = Instant.now();
-		long timeElapsed = Duration.between(startinstance, finishinstance).toMillis(); 
-		System.out.println("time taken:"+timeElapsed);
-		
+		System.out.println("Sum of volumes: "+sum);	
 		mongo.close();
 
 	}

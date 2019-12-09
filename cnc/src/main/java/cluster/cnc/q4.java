@@ -24,7 +24,6 @@ public class q4 {
 		
 		MongoClient mongo = new MongoClient("localhost", 27017);
 		MongoDatabase database = mongo.getDatabase("mongodb");
-		Instant startinstance = Instant.now();
 		MongoCollection<Document> collection = database.getCollection("highways");
 		FindIterable<Document> highways = collection.find();
 		ArrayList<String> detectorids = new ArrayList<String>();
@@ -87,10 +86,6 @@ public class q4 {
 		System.out.println("Average speed: "+ avg);
 		System.out.println("Length of the staion: "+stationLength);
 		System.out.println("Find the average travel time for 7-9AM and 4-6PM on September 22, 2011 for station Foster NB in seconds: "+ (stationLength/avg) * 3600);
-		Instant finishinstance = Instant.now();
-		long timeElapsed = Duration.between(startinstance, finishinstance).toMillis(); 
-		System.out.println("time taken:"+timeElapsed);
-	
 		mongo.close();
 	}
 	
