@@ -1,4 +1,4 @@
-package cluster.runner;
+package cluster.cnc;
 
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.Filters;
@@ -41,7 +41,7 @@ public class q2 {
 			tokens.add(Integer.parseInt(s));
 		}
 		System.out.println("Detector id's: "+Arrays.toString(detectorids.toArray()));
-		MongoCollection<Document> loopcollection = database.getCollection("loopdata1");
+		MongoCollection<Document> loopcollection = database.getCollection("loopdata");
 		int sum = 0;
 		Date start = null, end = null;
 		try {
@@ -62,7 +62,6 @@ public class q2 {
 				sum += (Integer)loop.get("volume");
 			}
 		}
-		System.out.println("No of matching records:"+count);
 		System.out.println("Sum of volumes: "+sum);	
 		mongo.close();
 
