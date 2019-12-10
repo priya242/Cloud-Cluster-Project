@@ -118,6 +118,41 @@ public class MongoConnection {
 	}
 //-----------------------------------------------------------------------------------------------------------------------
 
+	/*3)   Single-Day Station Travel Times: Find travel time for station Foster NB for 
+	5-minute intervals for Sept 22, 2011. Report travel time in seconds.*/
+
+	public void singleDayTravelTime() {
+		double length = 1.65;
+		if (loopCollection == null || readCollection == null) {
+			System.out.println("collection is empty/null");
+			return;
+		}
+		int total_volume = 0;
+		DateFormat format = new SimpleDateFormat("yyyy-dd-MM'T'HH:mm:ss'Z'", Locale.ENGLISH);
+		
+		FindIterable<Document> getDetectorIds = readCollection.find(eq("location_text", "Foster NB"));
+		for(Document r_doc : getDetectorIds) {
+			List<String> detectorIds =  (List<String>) r_doc.get("detector_id_array");
+			for(String dId : detectorIds) {
+				try {
+					FindIterable<Document> queryResult = loopCollection.find(and(eq("detectorid", Integer.parseInt(dId)),
+							gte("startime", format.parse("2011-22-09T00:00:00Z")),
+							lt("startime", format.parse("2011-23-09T00:00:00Z"))));
+					for(Document l_doc : queryResult) {
+						
+						
+						
+						
+					}
+				} catch (ParseException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+		System.out.println("station : Foster NB \nDate : Sept 21, 2019 \nTotal volume : " + total_volume);
+		
+	}
+
 
 	
 //-----------------------------------------------------------------------------------------------------------------------
@@ -150,12 +185,12 @@ public class MongoConnection {
 		
 		try {
 			Bson filter7to9 = Filters.and(
-		            Filters.in("call_id", detectorIdIntList),
+		            Filters.in("detectorid", detectorIdIntList),
 		            Filters.gte("startime", format.parse("2011-21-09 07:00:00")),
 		            Filters.lt("startime", format.parse("2011-21-09 09:00:00")));
 		    
 		    Bson filter4to6 = Filters.and(
-		            Filters.in("call_id", detectorIdIntList),
+		            Filters.in("detectorid", detectorIdIntList),
 		            Filters.gte("startime", format.parse("2011-21-09 16:00:00")),
 		            Filters.lt("startime", format.parse("2011-21-09 18:00:00")));
 		    
@@ -183,14 +218,80 @@ public class MongoConnection {
 			e.printStackTrace();
 		}
 	}
-	
-
 
 //-----------------------------------------------------------------------------------------------------------------------
+/*
+ 5)   Peak Period Travel Times: Find the average travel time for 7-9AM and 4-6PM 
+on September 22, 2011 for the I-205 NB freeway. Report travel time in minutes.
+*/
 
+	public void q5() {
+		if (loopCollection == null || readCollection == null) {
+			System.out.println("collection is empty/null");
+			return;
+		}
+		double travelTime7to9 = 0.0, travelTime4to6 = 0.0;
+		int count7to9 = 0, count4to6 =0;
+		double averageTravelTime7to9, averageTravelTime4to6;
+		DateFormat format = new SimpleDateFormat("yyyy-dd-MM HH:mm:ss", Locale.ENGLISH);
+		List<String> detectorIdList = null;
+		List<Integer> detectorIdIntList = null;
+		double stationLength = 0;
+		double cumAverageTravelTime7to9 = 0, cumAverageTravelTime4to6 = 0;
+		
+		Bson filterHighways = Filters.and(
+	            Filters.eq("highway_name", "I-205"),
+	            Filters.eq("direction", "NORTH"));
+
+		FindIterable<Document> highwayDocs = readCollection.find(filterHighways);
+		for(Document h_doc : highwayDocs) {
+			System.out.print("Station : " + h_doc.get("location_text"));
+			stationLength = Double.parseDouble((String) h_doc.get("length"));
+			detectorIdList =  (List<String>) h_doc.get("detector_id_array");
+			for(String strId : detectorIdList) {
+				detectorIdIntList.add(Integer.parseInt(strId));
+			}
+			try {
+				Bson filter7to9 = Filters.and(
+			            Filters.in("detectorid", detectorIdIntList),
+			            Filters.gte("startime", format.parse("2011-21-09 07:00:00")),
+			            Filters.lt("startime", format.parse("2011-21-09 09:00:00")));
+			    
+			    Bson filter4to6 = Filters.and(
+			            Filters.in("detectorid", detectorIdIntList),
+			            Filters.gte("startime", format.parse("2011-21-09 16:00:00")),
+			            Filters.lt("startime", format.parse("2011-21-09 18:00:00")));
+			    
+			    FindIterable<Document> loopdata7to9 = loopCollection.find(filter7to9);
+			    for (Document doc : loopdata7to9) {
+			    	if (doc.get("speed") != null) {
+			    		travelTime7to9 += (stationLength / Double.parseDouble((String) doc.get("speed")));
+			    		count7to9++;
+			    	}
+			    }
+			    averageTravelTime7to9 = travelTime7to9 / count7to9;
+			    System.out.println("averageTravelTime7to9 = " + averageTravelTime7to9);
+			    cumAverageTravelTime7to9 += averageTravelTime7to9;
+			    
+			    FindIterable<Document> loopdat4to6 = loopCollection.find(filter4to6);
+			    for (Document doc : loopdat4to6) {
+			    	if (doc.get("speed") != null) {
+			    		travelTime4to6 += (stationLength / Double.parseDouble((String) doc.get("speed")));
+			    		count4to6++;
+			    	}
+			    }
+			    averageTravelTime4to6 = travelTime4to6 / count4to6;
+			    System.out.println("averageTravelTime4to6 = " + averageTravelTime4to6);
+			    cumAverageTravelTime4to6 += averageTravelTime4to6;
+			} catch (ParseException e) {
+				e.printStackTrace();
+			}
+		}		
+	}
 
 	
 //-----------------------------------------------------------------------------------------------------------------------
+
 
 	
 	
