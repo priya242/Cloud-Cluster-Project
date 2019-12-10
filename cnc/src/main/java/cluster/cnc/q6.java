@@ -20,7 +20,7 @@ import java.util.Set;
 import org.bson.Document;
 
 //Find the average travel time for 7-9AM and 4-6PM on September 22, 2011 for the I-205 NB freeway. Report travel time in minutes.
-public class q5 {
+public class q6 {
 	public static void main(String[] args) {
 
 		MongoClient mongo = new MongoClient("localhost", 27017);
